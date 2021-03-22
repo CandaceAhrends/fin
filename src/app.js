@@ -13,14 +13,14 @@ import Login from "./components/login/Login";
 import { StoreContext, Auth, initialState } from "./AppContext";
 import Reducer from './AppReducer';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import orange from '@material-ui/core/colors/orange';
+import pink from '@material-ui/core/colors/pink';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: orange[500]
+      main: pink[500]
     },
     secondary: {
       main: lightBlue[500],

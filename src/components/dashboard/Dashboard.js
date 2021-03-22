@@ -3,7 +3,16 @@ import { useHistory } from "react-router-dom";
 import { StoreContext } from "../../AppContext";
 import { subscribe, unsubscribe } from '../../api/quotes';
 import * as moment from 'moment';
+import StockChart from '../stockchart/StockChart';
+import historicalPrice from '../../api/historicalPrice';
+import rsi from '../../api/rsi';
+import { take } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import historicalPriceByRange from '../../api/historicalPriceRange';
+import TextField from '@material-ui/core/TextField';
 
+
+import { Button } from '@material-ui/core';
 const transformTradeData = data => {
     return data.reverse().map(
         d => {
@@ -15,112 +24,179 @@ const transformTradeData = data => {
             }
         }
     ).map(d => Object.values(d));
+
+    // return [[1555315200000, 5194.8, 5197.3, 5182.4, 5192, 129.53875463],
+    // [1555318800000, 5192, 5195.7, 5190, 5195.6, 90.52421995],
+    // [1555322400000, 5195.6, 5195.7, 5170, 5174.2, 233.89034995]]
+
 }
 
-const data = transformTradeData(getData());
-console.log(data);
+const transformRangeData = (data = []) => {
+    //date: "2021-03-22 12:12:00"
+    //date: "2021-03-22 13:15:00"
+    //		date, open, high, low, close, volume
+    return data.reverse().map(
+        d => {
+            return {
+
+
+                date: moment.utc(`${d.date}T00:00:00-00:00`).valueOf(),
+                open: d.open,
+                high: d.low,
+                low: d.high,
+                close: d.close,
+
+                volume: d.volume
+
+            }
+        }
+    ).map(d => Object.values(d));
+
+
+}
+const transformRSIData = data => {
+
+    return data.reverse().map(
+        d => {
+            return [
+
+                moment.utc(d.date.replace(' ', 'T') + '-00:00').valueOf(),
+                d.rsi
+
+            ]
+        }
+    );
+
+    // return [
+    //     [1555315200000, 59.79775300640897],
+    //     [1555318800000, 60.46131186910198],
+    //     [1555322400000, 54.80141442765696]]
+}
+
 const Dashboard = () => {
 
     const history = useHistory();
     const [state, dispatch] = useContext(StoreContext);
-    let stockChart = null;
-    useEffect(() => {
+    const [query, setQuery] = useState({});
 
 
-        // if (state.isAuthenticated) {
+    const [data, setData] = useState({ price: [], rsi: [] });
 
-        //     subscribe();
+    const [symbol, setSymbol] = useState('AAPL');
 
-        //     setTimeout(() => {
+    // useEffect(() => {
+    //     const chartData = {
+    //         price: historicalPrice(symbol).pipe(take(1)),
+    //         rsi: rsi(symbol).pipe(take(1))
+    //     }
 
-
-        //         unsubscribe('AAPL');
-
-
-        //     }, 10000);
-
-
-        // } else {
-        //     history.push('/login');
-
-        // };
-    });
-
-    useEffect(() => {
-
-
-        stockChart = new Vue({
-            el: "#app",
-            data() {
-                return {
-                    stockData: {
-                        "ohlcv": data,
-
-                        "offchart": [{
-                            "name": "RSI, 20",
-                            "type": "RSI",
-                            "data": [
-                                [1555315200000, 59.79775300640897],
-
-
-                            ],
-                            "settings": {
-                                "upper": 70,
-                                "lower": 30,
-                                "backColor": "#9b9ba316",
-                                "bandColor": "purple"
-                            }
-
-                        }]
-                    }
-                }
-
-
-            },
-            methods: {
-                reset() {
-                    Object.assign(this.$data, { stockData: {} });
-                    setTimeout(() => {
-                        Object.assign(this.$data,
-                            {
-                                stockData: {
-                                    "ohlcv": [
-
-                                        [1588597200000, 8705.99, 8830.2, 8705.99, 8821.2, 597.03],
-                                        [1588600800000, 8821.2, 8845, 8775.8, 8787, 376.39],
-                                        [1588604400000, 8787, 8845, 8787, 8844.8, 180.09],
-                                        [1588608000000, 8844.73, 8890, 8800, 8827.6, 240.39],
-                                        [1588611600000, 8827.7, 8851, 8754.9, 8802.35, 200.83],
-                                        [1588615200000, 8802.3, 8877.1, 8801.4, 8846.5, 116.25],
+    //     const o = forkJoin(chartData);
+    //     o.subscribe({
+    //         next: value => {
+    //             setData({
+    //                 price: transformTradeData(value.price),
+    //                 rsi: transformRSIData(value.rsi)
+    //             });
+    //         },
+    //         complete: () => console.log('This is how it ends!'),
+    //     });
 
 
 
-                                    ]
-                                }
-                            }
+    // }, symbol);
 
-                        );
+    const load = () => {
+        console.log(" query >>", query);
 
-                    }, 0);
+        historicalPriceByRange(query).pipe(take(1)).subscribe(prices => {
 
-                }
-            },
-            components: {
-                trading: TradingVueJs.TradingVue
+            const priceData = transformRangeData(prices.historical);
+            console.log("price returned from range", priceData);
+            const queryprices = {
+                price: [...priceData],
+                rsi: []
             }
-        });
+            setData({
+                ...queryprices
+            });
 
-    });
-    const testReset = () => stockChart.reset();
+        })
+    }
 
-    return (<>
-        <p>test</p><button onClick={testReset}>Test Reset </button></>);
+    const onSelectDate = evt => {
+
+        console.log("On date Change >>", evt.target.value, evt.target.name);
+
+        setQuery({ ...query, [evt.target.name]: evt.target.value });
+    }
+
+    return (<><form noValidate>
+        <TextField
+            id="date"
+            label="From"
+            type="date"
+            onChange={onSelectDate}
+            name="fromDate"
+            InputLabelProps={{
+                shrink: true,
+            }}
+        />  <TextField
+            id="date"
+            label="To"
+            type="date"
+            onChange={onSelectDate}
+            name="toDate"
+
+            InputLabelProps={{
+                shrink: true,
+            }}
+        />
+        <TextField name="symbol" variant="outlined" onChange={onSelectDate} />   <Button onClick={load} variant="contained" color="primary"  >
+            test
+</Button>
+
+    </form><StockChart data={data} title={symbol}></StockChart></>);
 }
 
 export default Dashboard;
 
+function getData2() {
 
-
+    return [{
+        "date": "2021-02-22 13:25:00",
+        "open": 20.84000000,
+        "low": 20.83000000,
+        "high": 20.89000000,
+        "close": 20.88000000,
+        "volume": 149196
+    }, {
+        "date": "2021-02-22 13:24:00",
+        "open": 20.88000000,
+        "low": 20.83000000,
+        "high": 20.88000000,
+        "close": 20.83000000,
+        "volume": 113613
+    }];
+}
+function getRsi() {
+    return [{
+        "date": "2021-02-22 13:25:00",
+        "open": 119.99,
+        "high": 120.22,
+        "low": 119.87,
+        "close": 120.03,
+        "volume": 1.4086507E7,
+        "rsi": 41.49693667468299
+    }, {
+        "date": "2021-02-22 13:24:00",
+        "open": 120.0,
+        "high": 120.08,
+        "low": 119.85,
+        "close": 119.87,
+        "volume": 2273597.0,
+        "rsi": 31.85347590971157
+    }];
+}
 function getData() {
 
 

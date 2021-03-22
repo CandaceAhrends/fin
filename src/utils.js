@@ -57,3 +57,5 @@ export const getSessionData = () => {
         return JSON.parse(window.sessionStorage.getItem(DIARY_STATE));
 }
 
+
+

@@ -11,11 +11,11 @@ export const subscribe = (symbol) => {
     });
     // Listen for messages
     socket.addEventListener('message', function (event) {
-        console.log('Message from server ', event.data);
+        console.log(event.data);
         const stockData = JSON.parse(event.data);
         const stocks = stockData.data ? parsePrice(stockData.data) : null;
 
-        console.log("STOCKS:  ", stocks);
+        // console.log("STOCKS:  ", stocks);
 
     });
 }
