@@ -1,0 +1,58 @@
+html,
+body {
+   font-family: "roboto";
+   overflow-x: hidden;
+   padding: 0;
+   margin: 0;
+}
+body {
+   background: black;
+   color: white;
+}
+a {
+   text-decoration: none;
+}
+li {
+   list-style: none;
+}
+.hide {
+   visibility: hidden;
+}
+.show {
+   visibility: visible;
+}
+#container {
+   position: fixed;
+   width: 100vw;
+   height: 100vh;
+}
+#app {
+   margin: 0 20px;
+}
+$main-color: #e91e63;
+$content-background: #333;
+
+@mixin flex-center {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+@mixin clickable-img-link($padding) {
+   a {
+      padding: #{$padding};
+      img {
+         &:hover {
+            cursor: pointer;
+         }
+      }
+   }
+}
+
+@mixin clickable() {
+   cursor: pointer;
+}
+
+#app {
+   margin-left: 15rem;
+}
