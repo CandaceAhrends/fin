@@ -1,7 +1,7 @@
-const createNode = (data, isWord) => {
+const createNode = (data, isCompleteWord) => {
   return {
     data,
-    isWord,
+    isCompleteWord,
     children: [],
   };
 };
@@ -15,14 +15,13 @@ const findAllWords = (node) => {
 
   const res = children.reduce((collection, letterKey) => {
     const childNode = node.children[letterKey];
-    const currentLetter = node.data;
 
-    const letters = findAllWords(childNode);
+    const childLetters = findAllWords(childNode);
 
     collection = [
       ...collection,
-      ...letters.map((letter) => {
-        return `${currentLetter}${letter}`;
+      ...childLetters.map((letter) => {
+        return `${rootLetter}${letter}`;
       }),
     ];
 
