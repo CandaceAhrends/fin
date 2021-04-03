@@ -9,11 +9,15 @@ const createNode = (data, isCompleteWord) => {
 const findAllWords = (node) => {
   const children = Object.keys(node.children);
   const rootLetter = node.data;
+  let res = [];
+
   if (!children.length) {
     return [rootLetter];
+  } else if (node.isCompleteWord) {
+    res.unshift(node.data);
   }
 
-  const res = children.reduce((collection, letterKey) => {
+  res = children.reduce((collection, letterKey) => {
     const childNode = node.children[letterKey];
 
     const childLetters = findAllWords(childNode);
@@ -26,21 +30,17 @@ const findAllWords = (node) => {
     ];
 
     return collection;
-  }, []);
-
-  if (node.isWord) {
-    res.unshift(node.data);
-  }
+  }, res);
 
   return res;
 };
 
-function Tree() {
+function SearchTrie() {
   this.root = createNode(null);
   this.current = this.root;
 }
 
-Tree.prototype.insertWord = function (word) {
+SearchTrie.prototype.insertWord = function (word) {
   for (let i = 0; i < word.length; i++) {
     const ch = word[i];
 
@@ -51,8 +51,18 @@ Tree.prototype.insertWord = function (word) {
   }
   this.current = this.root;
 };
-
-Tree.prototype.autoCompleteWords = function (typedChars) {
+function iterateTrie(node) {
+  Object.keys(node.children).map((key) => {
+    const child = node.children[key];
+    if (child.isWord) console.log(child.data);
+    iterateTrie(child);
+  });
+}
+SearchTrie.prototype.showAll = function () {
+  const node = this.root;
+  iterateTrie(node);
+};
+SearchTrie.prototype.autoCompleteWords = function (typedChars) {
   let node = this.root;
   let lastNode = this.root;
   const path = Array.from(typedChars);
@@ -66,10 +76,9 @@ Tree.prototype.autoCompleteWords = function (typedChars) {
     }
   }
 
-  if (lastNode)
-    return lastNode
-      ? findAllWords(node).map((word) => `${typedChars}${word}`)
-      : [];
+  return lastNode
+    ? findAllWords(node).map((word) => `${typedChars}${word.slice(1)}`)
+    : [];
 };
 
-export default Tree;
+export default SearchTrie;

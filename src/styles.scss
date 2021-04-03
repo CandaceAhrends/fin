@@ -1,58 +1,75 @@
 html,
 body {
-   font-family: "roboto";
-   overflow-x: hidden;
-   padding: 0;
-   margin: 0;
+  font-family: "roboto";
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
 }
 body {
-   background: black;
-   color: white;
+  background: black;
+  color: white;
 }
 a {
-   text-decoration: none;
+  text-decoration: none;
 }
 li {
-   list-style: none;
+  list-style: none;
 }
 .hide {
-   visibility: hidden;
+  visibility: hidden;
 }
 .show {
-   visibility: visible;
+  visibility: visible;
 }
 #container {
-   position: fixed;
-   width: 100vw;
-   height: 100vh;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
 }
 #app {
-   margin: 0 20px;
+  margin: 0 20px;
 }
 $main-color: #e91e63;
 $content-background: #333;
 
 @mixin flex-center {
-   display: flex;
-   align-items: center;
-   justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin clickable-img-link($padding) {
-   a {
-      padding: #{$padding};
-      img {
-         &:hover {
-            cursor: pointer;
-         }
+  a {
+    padding: #{$padding};
+    img {
+      &:hover {
+        cursor: pointer;
       }
-   }
+    }
+  }
 }
 
 @mixin clickable() {
-   cursor: pointer;
+  cursor: pointer;
 }
-
+ul::-webkit-scrollbar {
+  width: 10px;
+}
+ul {
+  scrollbar-width: thin;
+  scrollbar-color: $main-color;
+}
+ul::-webkit-scrollbar-track {
+  background: #333;
+}
+ul::-webkit-scrollbar-thumb {
+  background-color: $main-color;
+  border-radius: 6px;
+  border: 3px solid $main-color;
+}
 #app {
-   margin-left: 15rem;
+  margin-left: 15rem;
+}
+.show {
+  display: block;
 }

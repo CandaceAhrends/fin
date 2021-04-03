@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ListItem from "./ListItem";
-import SideBar from "../sidebar/SideBar";
+import "./list.scss";
 
-const ScrollableList = ({ items }) => {
+const ScrollableList = ({ items, onItemSelect, initialSelected }) => {
+  const [selected, setSelected] = useState("");
+
+  useEffect(() => {
+    setSelected(initialSelected);
+  }, [initialSelected]);
+  const handleItemSelect = (symbol) => {
+    setSelected(symbol);
+    onItemSelect(symbol);
+  };
   return (
     <>
-      <SideBar></SideBar>
-      <aside style={{ overflow: "scroll", height: "99vh" }}>
-        {" "}
+      <ul style={{ overflow: "scroll", height: "99vh", padding: "1rem" }}>
         {items.map((item) => (
-          <ListItem title={item.title}></ListItem>
-        ))}{" "}
-      </aside>
+          <ListItem
+            className="list"
+            onItemSelect={handleItemSelect}
+            title={item.title}
+            selected={selected === item.title}
+          ></ListItem>
+        ))}
+      </ul>
     </>
   );
 };

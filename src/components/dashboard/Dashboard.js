@@ -9,8 +9,8 @@ import rsi from "../../api/rsi";
 import { take } from "rxjs/operators";
 import { forkJoin } from "rxjs";
 import historicalPriceByRange from "../../api/historicalPriceRange";
-import QueryBar from "../workarea/QueryBar";
-import ScrollableList from "../list/ScrollableList";
+import QueryBar from "../querybar/QueryBar";
+import SideBar from "../sidebar/SideBar";
 
 const transformTradeData = (data) => {
   return data
@@ -93,11 +93,18 @@ const transformRSIData = (data) => {
   //     [1555322400000, 54.80141442765696]]
 };
 
+const DATE_FORMAT = "YYYY-MM-DD";
+const getCurrentDate = () => moment().format(DATE_FORMAT);
+
 const Dashboard = () => {
   const history = useHistory();
   const [state, dispatch] = useContext(StoreContext);
+  const [query, setQuery] = useState({
+    toDate: getCurrentDate(),
+    fromDate: getCurrentDate(),
+  });
 
-  const [data, setData] = useState({ price: [], rsi: [] });
+  const [results, setResults] = useState({ price: [], rsi: [] });
 
   const [symbol, setSymbol] = useState("AAPL");
 
@@ -110,7 +117,7 @@ const Dashboard = () => {
   //     const o = forkJoin(chartData);
   //     o.subscribe({
   //         next: value => {
-  //             setData({
+  //             setResults({
   //                 price: transformTradeData(value.price),
   //                 rsi: transformRSIData(value.rsi)
   //             });
@@ -125,10 +132,9 @@ const Dashboard = () => {
       price: [...testing()],
       rsi: [],
     };
-    setData({
+    setResults({
       ...queryprices,
     });
-    console.log("load test exe query >>>>>>", query, queryprices);
   };
 
   const load = () => {
@@ -136,37 +142,24 @@ const Dashboard = () => {
       .pipe(take(1))
       .subscribe((prices) => {
         const priceData = transformRangeData(prices.historical);
-        console.log("price returned from range", priceData);
+
         const queryprices = {
           price: [...priceData],
           rsi: [],
         };
-        console.log(">>>>>", queryprices);
-        setData({
+
+        setResults({
           ...queryprices,
         });
       });
   };
-
-  const itemsTest = [
-    { title: "one" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "two" },
-    { title: "last" },
-  ];
-
+  const handleSelection = (symbol) => {
+    setSymbol(symbol);
+    load();
+  };
+  const handleDateSelect = (evt) => {
+    setQuery({ ...query, [evt.target.name]: evt.target.value });
+  };
   return (
     <>
       <div
@@ -175,16 +168,19 @@ const Dashboard = () => {
           top: 0,
           height: "99vh",
           width: "15rem",
-          border: "solid green",
         }}
       >
-        <ScrollableList items={itemsTest}></ScrollableList>
+        <SideBar handleSelection={handleSelection}></SideBar>
       </div>
-      <div id="work-area" style={{ marginLeft: "16rem" }}>
-        <QueryBar onClick={loadTest}></QueryBar>
+      <div style={{ marginLeft: "16rem" }}>
+        <QueryBar
+          toDate={query.toDate}
+          fromDate={query.fromDate}
+          handleDateSelect={handleDateSelect}
+        ></QueryBar>
       </div>
       <div id="stock-chart">
-        <StockChart data={data} title={symbol}></StockChart>
+        <StockChart data={results} title={symbol}></StockChart>
       </div>
     </>
   );

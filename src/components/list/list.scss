@@ -1,0 +1,34 @@
+@import "../../styles.scss";
+
+.item {
+  height: 3rem;
+  transform: skew(15deg);
+  margin: -0.1rem 0;
+  background: #333;
+  font-size: 2rem;
+  color: #ccc;
+  padding: 0.8rem 1.5rem;
+  z-index: 1;
+  border-top: solid black;
+  transition: all 0.2s ease-in;
+  &:first-child {
+    margin-top: 1rem;
+  }
+  &:hover,
+  &.selected {
+    @include clickable();
+    background: rgba(255, 245, 255, 0.2);
+
+    transform: skew(0deg);
+
+    color: $main-color;
+  }
+  &.selected {
+    font-size: 2.5rem;
+    height: 5rem;
+    width: 70%;
+    line-height: 2;
+    padding: 1rem 2rem;
+    border-left: solid $main-color;
+  }
+}
