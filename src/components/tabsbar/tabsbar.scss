@@ -1,0 +1,21 @@
+@import "../../styles.scss";
+
+.tabs {
+  display: flex;
+  padding: 0.5rem;
+  li {
+    @include clickable();
+    border: solid #666;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    padding: 0.2rem;
+    font-size: 1rem;
+    a {
+      color: white;
+      &.selected-tab {
+        font-weight: bolder;
+        color: $main-color;
+      }
+    }
+  }
+}

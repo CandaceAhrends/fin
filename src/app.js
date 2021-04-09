@@ -4,23 +4,22 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import "./app.scss";
 import "./forms.scss";
-import Dashboard from './components/dashboard/Dashboard';
+import Dashboard from "./components/dashboard/Dashboard";
 import Login from "./components/login/Login";
 import { StoreContext, Auth, initialState } from "./AppContext";
-import Reducer from './AppReducer';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import pink from '@material-ui/core/colors/pink';
-import lightBlue from '@material-ui/core/colors/lightBlue';
-
+import Reducer from "./AppReducer";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import pink from "@material-ui/core/colors/pink";
+import lightBlue from "@material-ui/core/colors/lightBlue";
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: pink[500]
+      main: pink[500],
     },
     secondary: {
       main: lightBlue[500],
@@ -29,7 +28,6 @@ const theme = createMuiTheme({
 });
 
 function RouteGuard({ children, ...rest }) {
-
   return (
     <Route
       {...rest}
@@ -37,49 +35,39 @@ function RouteGuard({ children, ...rest }) {
         Auth.getToken() ? (
           children
         ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: { from: location }
-              }}
-            />
-          )
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
       }
     />
   );
 }
 
 const App = () => {
-
   const [state, dispatch] = useReducer(Reducer, initialState);
 
-
-
-  return (<StoreContext.Provider value={
-
-
-
-    [state, dispatch, Auth]
-  }><Router>
-      <ThemeProvider theme={theme}>
-
-
-        <main className={`main-${location.pathname.slice(1)}`}>
-          <Switch>
-            <Route path="/login">
-              <Login></Login>
-            </Route>
-            <Route path="/">
-              <Dashboard></Dashboard>
-            </Route>
-
-          </Switch>
-        </main>
-
-      </ThemeProvider>
-
-    </Router></StoreContext.Provider>);
-
+  return (
+    <StoreContext.Provider value={[state, dispatch, Auth]}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <main className={`main-${location.pathname.slice(1)}`}>
+            <Switch>
+              <Route path="/login">
+                <Login></Login>
+              </Route>
+              <Route path="/">
+                <Dashboard></Dashboard>
+              </Route>
+            </Switch>
+          </main>
+        </ThemeProvider>
+      </Router>
+    </StoreContext.Provider>
+  );
 };
 
 export default hot(module)(App);

@@ -11,6 +11,7 @@ const Search = (props) => {
   const searchEnter = React.useRef("");
   const [predictedWords, setPredictedWords] = useState([]);
   const [isFound, setIsFound] = useState(false);
+  const [showSearchIcon, setShowSearchIcon] = useState(true);
   const trie = new SearchTrie();
 
   useEffect(() => {
@@ -50,18 +51,27 @@ const Search = (props) => {
   };
 
   const onFocus = (evt) => {
-    console.log("onFocus", evt.target.value);
+    setShowSearchIcon(false);
   };
   const onBlur = (evt) => {
-    console.log("onBlur", evt.target.value);
+    setShowSearchIcon(true);
+  };
+  const onKeyUp = (evt) => {
+    console.log("key up ", evt);
+    if (evt.key === "Enter") {
+      props.handleSelection(evt.target.value);
+      searchEnter.current.value = "";
+    }
   };
 
   return (
     <>
       <div className="symbol-select">
+        <div class={showSearchIcon ? "search icon" : ""}></div>
         <input
           ref={searchEnter}
           class="search-input"
+          onKeyUp={onKeyUp}
           onFocus={onFocus}
           onBlur={onBlur}
         />

@@ -2,14 +2,21 @@ import React, { useEffect, useState } from "react";
 import Search from "../search/search";
 import ScrollableList from "../list/ScrollableList";
 import stockSymbols from "../../api/stockSymbols";
+import { saveLocalData, getLocalData } from "../../utils";
 import "./sidebar.scss";
+const SIDEBAR_STATE = "sidebarstate";
 
 const SideBar = (props) => {
   const [itemsList, setItemsList] = useState([]);
   const [initialSelected, setInitialSelected] = useState("");
   useEffect(() => {
-    console.log("set up listener");
+    const savedList = getLocalData(SIDEBAR_STATE);
+    if (savedList) setItemsList(savedList);
   }, []);
+
+  useEffect(() => {
+    saveLocalData(itemsList, SIDEBAR_STATE);
+  }, [itemsList]);
 
   const handleSearchSelection = (selected) => {
     console.log("handleSelection", selected);
@@ -22,6 +29,7 @@ const SideBar = (props) => {
   };
   const handleListItemSelect = (selected) => {
     console.log("handleListItemSelect handleListItemSelect", selected);
+    props.handleSelection(selected);
   };
   return (
     <>

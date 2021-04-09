@@ -5,8 +5,18 @@ label {
   font-size: 1.1rem;
   display: block;
 }
-
-.MuiSelect-root .MuiSelect-select .MuiSelect-selectMenu .MuiInputBase-input .MuiInput-input {
+.MuiInputBase-input {
+  width: 80% !important;
+}
+.MuiInputBase-input,
+.MuiInput-underline:before {
+  font-size: 0.9rem !important;
+}
+.MuiSelect-root
+  .MuiSelect-select
+  .MuiSelect-selectMenu
+  .MuiInputBase-input
+  .MuiInput-input {
   padding: 22px !important;
 }
 .MuiSelect-icon {

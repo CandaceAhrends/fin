@@ -2,19 +2,17 @@ import axios from "./Axios";
 import { of, from, forkJoin, throwError, Observable } from "rxjs";
 import { switchMap, map, tap, catchError, reduce } from "rxjs/operators";
 import moment from "moment";
-//const url = "http://localhost:3200/user";
+import { apiKey } from "./config";
 const url = `https://financialmodelingprep.com/api/v3/stock/list?apikey=`;
 
-const key = "a6bc9823f42d03208d2933eef1c722bd";
-
 const stockSymbols = () => {
-  // return from(axios.get(`${url}${key}`)).pipe(
-  //   map((res) => res.data),
-  //   catchError((error) => {
-  //     return of({ message: "Server Error" });
-  //   })
-  // );
-  return of(getDummy());
+  return from(axios.get(`${url}${apiKey}`)).pipe(
+    map((res) => res.data),
+    catchError((error) => {
+      return of({ message: "Server Error" });
+    })
+  );
+  // return of(getDummy());
 };
 
 export default stockSymbols;
@@ -34,7 +32,7 @@ function getDummy() {
       exchange: "Nasdaq Global Select",
     },
     {
-      symbol: "C",
+      symbol: "AAPL",
       name: "Kinder Morgan Inc",
       price: 16.84,
       exchange: "New York Stock Exchange",

@@ -31,3 +31,25 @@
     }
   }
 }
+.search.icon {
+  color: #000;
+  position: absolute;
+  margin-top: 8px;
+  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+  border: solid 2px #333;
+  border-radius: 100%;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.search.icon:before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 9px;
+  height: 16px;
+  width: 3px;
+  background-color: #333;
+}

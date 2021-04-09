@@ -1,14 +1,14 @@
 const path = require("path");
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
-  devtool: 'eval-source-map',
-  mode: 'development',
-  entry: ["./src/utils.js", "./src/index.js", "./trading-vue.js"],
+  devtool: "eval-source-map",
+  mode: "development",
+  entry: ["./src/utils.js", "./src/index.js"],
   output: {
-    path: path.resolve(__dirname, "diet"),
+    path: path.resolve(__dirname, "fin"),
     filename: "bundle.js",
-    publicPath: '/diet/'
+    publicPath: "/fin/",
   },
   module: {
     rules: [
@@ -16,10 +16,8 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-
+          loader: "babel-loader",
         },
-
       },
       {
         test: /\.(s*)css$/,
@@ -27,29 +25,27 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader',
-        ],
-      }
+        use: ["file-loader"],
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: './index.html',
-      publicPath: '/diet/',
-      template: './index-template.ejs',
-      inject: 'body',
+      filename: "./index.html",
+      publicPath: "/fin/",
+      template: "./index-template.ejs",
+      inject: "body",
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    })
+      "process.env.NODE_ENV": JSON.stringify("production"),
+    }),
   ],
 
   devServer: {
-    contentBase: path.join(__dirname, 'diet/'),
+    contentBase: path.join(__dirname, "fin/"),
     hot: true,
     compress: true,
     port: 9000,
-    publicPath: '/diet/'
-  }
+    publicPath: "/fin/",
+  },
 };

@@ -1,5 +1,7 @@
 {
     "workbench.tree.indent": 10,
     "debug.console.fontSize": 18,
-    "window.zoomLevel": 2
+    "window.zoomLevel": 2,
+    "editor.fontSize": 10,
+    "terminal.integrated.fontSize": 10
 }
